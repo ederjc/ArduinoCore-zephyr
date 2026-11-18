@@ -8,13 +8,6 @@
 # list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
 
-# -- Path setup --------------------------------------------------------------
-
-import os
-
-# Check if we're running on Read the Docs' servers
-read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
-
 # -- Project information -----------------------------------------------------
 
 project = "Arduino Core for Infineon PSOC™"
