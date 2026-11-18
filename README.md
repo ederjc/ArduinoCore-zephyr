@@ -33,6 +33,13 @@ Infineon support is currently being implemented for two microcontrollers familie
   [`control-main`](https://github.com/Infineon/ArduinoCore-zephyr/tree/control-main)
   branch.
 
+## Documentation
+
+The documentation for this core is available at
+<https://infineon.github.io/ArduinoCore-zephyr/>. Every release and every
+development branch has its own version of the documentation, selectable from
+the version switcher on each page.
+
 --------------------------------------
 
 ## Arduino Core for Zephyr
