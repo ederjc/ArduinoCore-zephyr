@@ -60,6 +60,9 @@ highlight_language = "c++"
 html_theme = "sphinx_rtd_theme"
 html_logo = "img/ifx_logo_white_green_s.png"
 html_css_files = ["brand.css"]
+# Version switcher and outdated-version banner for the versioned GitHub Pages
+# site. It is inactive in local builds, where no versions manifest exists.
+html_js_files = ["version-switcher.js"]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
