@@ -1,0 +1,221 @@
+name: Documentation
+
+# Builds the Sphinx documentation and publishes every branch and release tag
+# as its own version of the documentation site on GitHub Pages:
+#
+# - push to a branch or tag:   build and publish that version
+# - branch or tag deleted:     unpublish that version
+# - pull request:              build with warnings as errors, no publishing;
+#                              the HTML is attached to the run as artifact
+# - manual run:                (re)publish any branch or tag, e.g. to backfill
+#                              releases that predate this workflow
+#
+# Published versions are collected in the gh-pages branch, which the
+# "Documentation deploy" workflow deploys to GitHub Pages.
+# See docs/contributing.rst for details.
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!gh-pages'
+    tags:
+      - '**'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/scripts/docs_site.py'
+      - '.github/scripts/test_docs_site.py'
+      - '.github/scripts/update_docs_site.sh'
+      - '.github/workflows/docs.yml'
+      - '.github/workflows/docs_deploy.yml'
+  delete:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or tag to (re)publish'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  # Push, delete and manual runs for the same ref must not race each other.
+  group: >-
+    docs-${{
+      github.event_name == 'pull_request' && format('pr-{0}', github.event.number) ||
+      github.event_name == 'delete' && format('ref-{0}', github.event.ref) ||
+      github.event_name == 'workflow_dispatch' && format('ref-{0}', inputs.ref) ||
+      format('ref-{0}', github.ref_name)
+    }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    if: github.event_name != 'delete'
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.ref.outputs.ref }}
+      ref-type: ${{ steps.ref.outputs.ref-type }}
+      sha: ${{ steps.source.outputs.sha }}
+      has-docs: ${{ steps.source.outputs.has-docs }}
+    steps:
+      - name: Resolve documentation version
+        id: ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_REF: ${{ inputs.ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REPO: ${{ github.repository }}
+        run: |
+          ref_exists() {
+            if gh api "$1" --silent 2>"$RUNNER_TEMP/ref-error"; then
+              return 0
+            fi
+            if grep -q 'HTTP 404' "$RUNNER_TEMP/ref-error"; then
+              return 1
+            fi
+            cat "$RUNNER_TEMP/ref-error" >&2
+            exit 1
+          }
+          case "$EVENT" in
+            workflow_dispatch)
+              ref="$INPUT_REF"
+              if ref_exists "repos/$REPO/git/ref/heads/$ref"; then
+                ref_type=branch
+              elif ref_exists "repos/$REPO/git/ref/tags/$ref"; then
+                ref_type=tag
+              else
+                echo "::error::'$ref' is neither a branch nor a tag of $REPO."
+                exit 1
+              fi
+              checkout="refs/$([[ $ref_type == branch ]] && echo heads || echo tags)/$ref"
+              ;;
+            pull_request)
+              ref="$HEAD_REF"; ref_type=pull_request; checkout=""
+              ;;
+            *)
+              ref="$REF_NAME"; ref_type="$REF_TYPE"; checkout=""
+              ;;
+          esac
+          {
+            echo "ref=$ref"
+            echo "ref-type=$ref_type"
+            echo "checkout=$checkout"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.ref.outputs.checkout }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Check for documentation sources
+        id: source
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if [[ -f docs/conf.py ]]; then
+            echo "has-docs=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-docs=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No docs/conf.py on this ref; nothing to build."
+          fi
+
+      - name: Set up Python
+        if: steps.source.outputs.has-docs == 'true'
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: docs/requirements.txt
+
+      - name: Install dependencies
+        if: steps.source.outputs.has-docs == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends graphviz
+          python -m pip install -r docs/requirements.txt
+
+      - name: Test docs site tooling
+        if: github.event_name == 'pull_request'
+        run: python3 -m unittest discover -v -s .github/scripts
+
+      - name: Build HTML
+        if: steps.source.outputs.has-docs == 'true'
+        env:
+          # Pull requests must not introduce warnings. Published refs are built
+          # leniently so that existing releases can always be republished.
+          SPHINXOPTS: ${{ github.event_name == 'pull_request' && '-W --keep-going' || '' }}
+        run: |
+          python -m sphinx -b html -d "$RUNNER_TEMP/doctrees" $SPHINXOPTS \
+            docs "$RUNNER_TEMP/html"
+
+      - name: Upload HTML
+        if: steps.source.outputs.has-docs == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs-html
+          path: ${{ runner.temp }}/html
+          retention-days: 14
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: build
+    if: github.event_name != 'pull_request' && needs.build.outputs.has-docs == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Publishing tooling always comes from the commit that triggered the
+      # workflow, also when backfilling older refs without the tooling.
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+
+      - name: Download HTML
+        uses: actions/download-artifact@v8
+        with:
+          name: docs-html
+          path: ${{ runner.temp }}/html
+
+      - name: Publish version
+        env:
+          REF: ${{ needs.build.outputs.ref }}
+          REF_TYPE: ${{ needs.build.outputs.ref-type }}
+          SHA: ${{ needs.build.outputs.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          export DOCS_SITE_COMMIT_MESSAGE="docs: publish $REF_TYPE $REF (${SHA:0:12})"
+          .github/scripts/update_docs_site.sh add \
+            --ref "$REF" --ref-type "$REF_TYPE" --commit "$SHA" \
+            --default-branch "$DEFAULT_BRANCH" --html "$RUNNER_TEMP/html"
+
+  unpublish:
+    name: Unpublish
+    if: github.event_name == 'delete' && github.event.ref != 'gh-pages'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+
+      - name: Unpublish version
+        env:
+          REF: ${{ github.event.ref }}
+          REF_TYPE: ${{ github.event.ref_type }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          export DOCS_SITE_COMMIT_MESSAGE="docs: unpublish $REF_TYPE $REF"
+          .github/scripts/update_docs_site.sh remove \
+            --ref "$REF" --ref-type "$REF_TYPE" --default-branch "$DEFAULT_BRANCH"

@@ -1,0 +1,83 @@
+name: Documentation deploy
+
+# Deploys the documentation site collected in the gh-pages branch to GitHub
+# Pages whenever the "Documentation" workflow has published or unpublished a
+# version.
+#
+# This runs as a separate workflow_run workflow because:
+# - workflow_run always runs in the context of the default branch, which the
+#   github-pages environment protection rules allow, also when the triggering
+#   push was to a tag or another branch
+# - pushes made with GITHUB_TOKEN do not trigger GitHub's own branch-based
+#   Pages build, so the deployment has to be done explicitly
+#
+# Requires Settings > Pages > Build and deployment > Source: "GitHub Actions".
+
+on:
+  workflow_run:
+    workflows: [Documentation]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never cancel a running deployment; the next one deploys the newest state.
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event != 'pull_request')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check for published documentation
+        id: site
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if gh api "repos/$REPO/branches/gh-pages" --silent 2>"$RUNNER_TEMP/site-error"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif grep -q 'HTTP 404' "$RUNNER_TEMP/site-error"; then
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::The gh-pages branch does not exist yet; nothing to deploy."
+          else
+            cat "$RUNNER_TEMP/site-error" >&2
+            exit 1
+          fi
+
+      - name: Checkout site
+        if: steps.site.outputs.exists == 'true'
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: site
+          persist-credentials: false
+
+      - name: Configure Pages
+        if: steps.site.outputs.exists == 'true'
+        uses: actions/configure-pages@v6
+
+      - name: Upload site
+        if: steps.site.outputs.exists == 'true'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        if: steps.site.outputs.exists == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v5
