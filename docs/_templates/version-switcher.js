@@ -137,8 +137,8 @@
     text.appendChild(document.createTextNode(isBranch
       ? "This is the development documentation for the " + current.name +
         " branch and may describe unreleased features. "
-      : "This is the documentation for the older release " + current.name +
-        ". "));
+      : "This is the documentation for release " + current.name +
+        ", which is not the latest stable release. "));
     var link = el("a", null, "Go to the documentation of the latest release (" +
       stable + ").");
     link.href = versionUrl("stable");

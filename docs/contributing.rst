@@ -82,14 +82,20 @@ which is updated on every push:
    * - ``/``
      - Redirects to ``stable``, or to ``latest`` before the first release.
 
-The version switcher in the lower left corner of every page lists all
-published versions. Pages of branches and older releases show a banner
-linking to the newest release.
+The version switcher lists all published versions. Branches and releases
+other than the latest stable release show a banner linking to stable.
 
-Deleting a branch or tag also removes its documentation. To publish a branch
-or tag that has not been built yet, e.g. a release created before the
-documentation was published on GitHub Pages, run the *Documentation* workflow
-manually from the *Actions* tab and enter the branch or tag name.
+Deleting a branch or tag also removes its documentation. Automatic builds
+require the workflow to be present in the branch or tag. To publish an older
+ref, run the *Documentation* workflow manually from the default branch and
+enter the branch or tag name. Older documentation without the version
+switcher remains navigable through the site home page.
+
+Refs that produce the same slug, and the reserved names ``latest`` and
+``stable``, cannot be published together; the workflow reports an error
+instead of overwriting an existing version.
 
 The published versions are collected in the ``gh-pages`` branch, which is
 managed by the *Documentation* workflow and must not be edited by hand.
+For another repository, set its GitHub Pages source to *GitHub Actions* and
+backfill any existing refs through the manual workflow.

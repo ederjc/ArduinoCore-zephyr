@@ -49,11 +49,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          if gh api "repos/$REPO/branches/gh-pages" --silent 2>/dev/null; then
+          if gh api "repos/$REPO/branches/gh-pages" --silent 2>"$RUNNER_TEMP/site-error"; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
+          elif grep -q 'HTTP 404' "$RUNNER_TEMP/site-error"; then
             echo "exists=false" >> "$GITHUB_OUTPUT"
             echo "::notice::The gh-pages branch does not exist yet; nothing to deploy."
+          else
+            cat "$RUNNER_TEMP/site-error" >&2
+            exit 1
           fi
 
       - name: Checkout site

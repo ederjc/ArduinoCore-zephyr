@@ -13,7 +13,7 @@ import docs_site
 
 
 class SlugTest(unittest.TestCase):
-    def test_matches_read_the_docs_slugs(self):
+    def test_slugifies_refs(self):
         self.assertEqual(docs_site.slugify("ifx-main"), "ifx-main")
         self.assertEqual(docs_site.slugify("feature/add-psoc-control"), "feature-add-psoc-control")
         self.assertEqual(docs_site.slugify("V1.2.0"), "v1.2.0")

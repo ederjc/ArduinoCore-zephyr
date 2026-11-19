@@ -46,11 +46,17 @@ for attempt in $(seq 1 "$attempts"); do
   rm -rf "$site" "$work/index"
   mkdir -p "$site"
 
-  if git fetch --quiet --no-tags --depth=1 origin \
-      "+refs/heads/$branch:refs/remotes/origin/$branch" 2>/dev/null; then
+  if git ls-remote --exit-code --heads origin "refs/heads/$branch" >"$work/remote"; then
+    git fetch --quiet --no-tags --depth=1 origin \
+      "+refs/heads/$branch:refs/remotes/origin/$branch"
     base="$(git rev-parse "refs/remotes/origin/$branch")"
     git archive "$base" | tar -x -C "$site"
   else
+    status=$?
+    if [[ "$status" -ne 2 ]]; then
+      echo "error: unable to check whether branch $branch exists." >&2
+      exit "$status"
+    fi
     if [[ "$action" == "remove" ]]; then
       echo "Branch $branch does not exist; nothing to remove."
       exit 0

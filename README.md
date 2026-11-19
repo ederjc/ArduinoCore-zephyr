@@ -35,10 +35,8 @@ Infineon support is currently being implemented for two microcontrollers familie
 
 ## Documentation
 
-The documentation for this core is available at
-<https://infineon.github.io/ArduinoCore-zephyr/>. Every release and every
-development branch has its own version of the documentation, selectable from
-the version switcher on each page.
+The [documentation source](docs/index.rst) is built and published to GitHub
+Pages for branches and tags that contain the documentation workflow.
 
 --------------------------------------
 

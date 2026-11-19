@@ -1,5 +1,4 @@
-# Python packages used to build the documentation, pinned so that every
-# published version (branch or release tag) is built reproducibly.
+# Direct Python dependencies used to build the documentation.
 # Install with: pip install -r docs/requirements.txt
 sphinx==8.2.3
 sphinx-tabs==3.5.0

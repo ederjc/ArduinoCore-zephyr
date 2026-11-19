@@ -33,7 +33,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Branch or tag to (re)publish, e.g. ifx-main or 0.0.2'
+        description: 'Branch or tag to (re)publish'
         required: true
         type: string
 
@@ -41,13 +41,13 @@ permissions:
   contents: read
 
 concurrency:
-  # One run per documentation version; a newer push supersedes an older one.
+  # Push, delete and manual runs for the same ref must not race each other.
   group: >-
     docs-${{
       github.event_name == 'pull_request' && format('pr-{0}', github.event.number) ||
-      github.event_name == 'delete' && format('{0}-{1}', github.event.ref_type, github.event.ref) ||
-      github.event_name == 'workflow_dispatch' && format('dispatch-{0}', inputs.ref) ||
-      github.ref
+      github.event_name == 'delete' && format('ref-{0}', github.event.ref) ||
+      github.event_name == 'workflow_dispatch' && format('ref-{0}', inputs.ref) ||
+      format('ref-{0}', github.ref_name)
     }}
   cancel-in-progress: true
 
@@ -73,12 +73,22 @@ jobs:
           REF_TYPE: ${{ github.ref_type }}
           REPO: ${{ github.repository }}
         run: |
+          ref_exists() {
+            if gh api "$1" --silent 2>"$RUNNER_TEMP/ref-error"; then
+              return 0
+            fi
+            if grep -q 'HTTP 404' "$RUNNER_TEMP/ref-error"; then
+              return 1
+            fi
+            cat "$RUNNER_TEMP/ref-error" >&2
+            exit 1
+          }
           case "$EVENT" in
             workflow_dispatch)
               ref="$INPUT_REF"
-              if gh api "repos/$REPO/git/ref/heads/$ref" --silent 2>/dev/null; then
+              if ref_exists "repos/$REPO/git/ref/heads/$ref"; then
                 ref_type=branch
-              elif gh api "repos/$REPO/git/ref/tags/$ref" --silent 2>/dev/null; then
+              elif ref_exists "repos/$REPO/git/ref/tags/$ref"; then
                 ref_type=tag
               else
                 echo "::error::'$ref' is neither a branch nor a tag of $REPO."
@@ -162,7 +172,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: read
     steps:
       # Publishing tooling always comes from the commit that triggered the
       # workflow, also when backfilling older refs without the tooling.
@@ -188,24 +197,6 @@ jobs:
           .github/scripts/update_docs_site.sh add \
             --ref "$REF" --ref-type "$REF_TYPE" --commit "$SHA" \
             --default-branch "$DEFAULT_BRANCH" --html "$RUNNER_TEMP/html"
-
-      - name: Summary
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REF: ${{ needs.build.outputs.ref }}
-          REF_TYPE: ${{ needs.build.outputs.ref-type }}
-          REPO: ${{ github.repository }}
-        run: |
-          slug="$(python3 .github/scripts/docs_site.py slug "$REF")"
-          url="$(gh api "repos/$REPO/pages" --jq .html_url 2>/dev/null || true)"
-          {
-            echo "### Documentation published"
-            echo
-            echo "The $REF_TYPE \`$REF\` is published to \`$slug/\`."
-            if [[ -n "$url" ]]; then
-              echo "It is live at ${url%/}/$slug/ once the deployment finishes."
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
 
   unpublish:
     name: Unpublish

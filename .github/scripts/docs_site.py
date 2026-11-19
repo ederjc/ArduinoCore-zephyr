@@ -44,7 +44,7 @@ class SiteError(Exception):
 
 
 def slugify(ref: str) -> str:
-    """Return the URL folder name for a Git ref, as Read the Docs does.
+    """Return an RTD-style URL folder name for a Git ref.
 
     The name is lowercased, every run of characters outside ``a-z0-9._-``
     becomes a single ``-``, and leading/trailing separators are dropped.
