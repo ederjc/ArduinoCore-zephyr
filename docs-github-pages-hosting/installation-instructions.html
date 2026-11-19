@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation Instructions &mdash; Arduino Core for Infineon PSOC™  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="_static/brand.css?v=490f2ae8" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/version-switcher.js?v=cfe2e787"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Supported Boards" href="hw-platforms.html" />
+    <link rel="prev" title="Arduino Core for Infineon PSOC™" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Arduino Core for Infineon PSOC™
+              <img src="_static/ifx_logo_white_green_s.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">CONTENT</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation Instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#integration-in-arduino-ide">Integration in Arduino IDE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-in-arduino-cli">Installation in Arduino CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hw-platforms.html">Supported Boards</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CONTRIBUTING</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="env-setup.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run-tests.html">Running Tests</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arduino Core for Infineon PSOC™</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation Instructions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation-instructions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation-instructions">
+<h1>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Link to this heading"></a></h1>
+<p>You can install the core through the Boards Manager in the Arduino IDE, or via
+the Arduino CLI. After installing the core, the loader has to be flashed
+before your first sketch can be uploaded.</p>
+<section id="integration-in-arduino-ide">
+<h2>Integration in Arduino IDE<a class="headerlink" href="#integration-in-arduino-ide" title="Link to this heading"></a></h2>
+<p>Use Arduino IDE 2.x and install the platform through Arduino’s Boards Manager.</p>
+<ol class="arabic">
+<li><p>Open Arduino IDE.</p></li>
+<li><p>Navigate to <em>File &gt; Preferences</em>.</p></li>
+<li><p>In <em>Additional boards manager URLs</em>, add:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>https://github.com/Infineon/ArduinoCore-zephyr/releases/latest/download/package_infineon_pse84_index.json
+</pre></div>
+</div>
+</li>
+<li><p>Open <em>Boards Manager</em> (left side menu).</p></li>
+<li><p>Search for <em>PSOC Edge</em> and install <code class="docutils literal notranslate"><span class="pre">Infineon</span> <span class="pre">PSOC</span> <span class="pre">Edge</span> <span class="pre">Boards</span></code>.</p></li>
+<li><p>Select the board and the correct serial port:
+<em>Tools &gt; Board &gt; Infineon PSOC Edge Boards &gt; Infineon KIT-PSE84-AI (PSOC Edge E84)</em>
+and <em>Tools &gt; Port</em>.</p></li>
+<li><p>Flash the loader: <em>Tools &gt; Burn Bootloader</em>.</p></li>
+<li><p>Open or write a sketch and click <em>Upload</em>.</p></li>
+</ol>
+</section>
+<section id="installation-in-arduino-cli">
+<h2>Installation in Arduino CLI<a class="headerlink" href="#installation-in-arduino-cli" title="Link to this heading"></a></h2>
+<p>Install the core:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arduino-cli<span class="w"> </span>core<span class="w"> </span>install<span class="w"> </span>infineon:zephyr_pse84<span class="w"> </span>--additional-urls<span class="w"> </span>https://github.com/Infineon/ArduinoCore-zephyr/releases/latest/download/package_infineon_pse84_index.json
+</pre></div>
+</div>
+<p>Confirm the core installed correctly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arduino-cli<span class="w"> </span>core<span class="w"> </span>list
+</pre></div>
+</div>
+<p>The FQBN for the Infineon KIT-PSE84-AI (PSOC™ Edge E84) is
+<code class="docutils literal notranslate"><span class="pre">infineon:zephyr_pse84:kit_pse84_ai</span></code>.</p>
+<p>Flash the loader:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arduino-cli<span class="w"> </span>burn-bootloader<span class="w"> </span>-b<span class="w"> </span>infineon:zephyr_pse84:kit_pse84_ai
+</pre></div>
+</div>
+<p>Compile and upload a sketch:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arduino-cli<span class="w"> </span>compile<span class="w"> </span>-b<span class="w"> </span>infineon:zephyr_pse84:kit_pse84_ai<span class="w"> </span>MySketch
+arduino-cli<span class="w"> </span>upload<span class="w"> </span>-b<span class="w"> </span>infineon:zephyr_pse84:kit_pse84_ai<span class="w"> </span>-p<span class="w"> </span>&lt;port&gt;<span class="w"> </span>MySketch
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Arduino Core for Infineon PSOC™" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hw-platforms.html" class="btn btn-neutral float-right" title="Supported Boards" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026 Infineon Technologies AG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arduino Core for Infineon PSOC™ &mdash; Arduino Core for Infineon PSOC™  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="_static/brand.css?v=490f2ae8" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/version-switcher.js?v=cfe2e787"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation Instructions" href="installation-instructions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Arduino Core for Infineon PSOC™
+              <img src="_static/ifx_logo_white_green_s.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">CONTENT</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation-instructions.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw-platforms.html">Supported Boards</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CONTRIBUTING</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="env-setup.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run-tests.html">Running Tests</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Arduino Core for Infineon PSOC™</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Arduino Core for Infineon PSOC™</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="arduino-core-for-infineon-psoc">
+<h1>Arduino Core for Infineon PSOC™<a class="headerlink" href="#arduino-core-for-infineon-psoc" title="Link to this heading"></a></h1>
+<p>This project brings Arduino support to selected Infineon boards powered by
+Zephyr. See <a class="reference internal" href="hw-platforms.html"><span class="doc">Supported Boards</span></a> for an overview of
+currently supported boards.</p>
+<p>Looking for Arduino support for other Infineon microcontrollers? See:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Infineon/arduino-core-psoc6">PSOC™ 6 for Arduino</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Infineon/XMC-for-Arduino">XMC™ for Arduino</a></p></li>
+</ul>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading"></a></h2>
+<div class="graphviz"><object data="_images/graphviz-3a533c330b00ca9a8a8aeccab12d46b48ce38861.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph architecture {
+    bgcolor=&quot;transparent&quot;;
+    node [shape=plaintext, fontname=&quot;Helvetica,Arial,sans-serif&quot;, fontsize=13];
+
+    stack [label=&lt;
+        &lt;TABLE BORDER=&quot;0&quot; CELLBORDER=&quot;1&quot; CELLSPACING=&quot;6&quot; CELLPADDING=&quot;12&quot; COLOR=&quot;#0A8276&quot;&gt;
+          &lt;TR&gt;
+            &lt;TD COLSPAN=&quot;2&quot; BGCOLOR=&quot;#E6F4F2&quot;&gt;&lt;FONT COLOR=&quot;#0A8276&quot;&gt;&lt;B&gt;Arduino Core for Zephyr RTOS&lt;/B&gt;&lt;BR/&gt;&lt;FONT POINT-SIZE=&quot;10&quot;&gt;shared Arduino API&lt;/FONT&gt;&lt;/FONT&gt;&lt;/TD&gt;
+            &lt;TD ROWSPAN=&quot;2&quot; BGCOLOR=&quot;#E6F4F2&quot; VALIGN=&quot;MIDDLE&quot;&gt;&lt;FONT COLOR=&quot;#0A8276&quot;&gt;&lt;B&gt;This project&lt;/B&gt;&lt;/FONT&gt;&lt;/TD&gt;
+          &lt;/TR&gt;
+          &lt;TR&gt;
+            &lt;TD BGCOLOR=&quot;white&quot;&gt;PSOC™ Edge boards&lt;BR/&gt;&lt;FONT POINT-SIZE=&quot;10&quot;&gt;Arduino board variant&lt;BR/&gt;(pin mapping, overlay, config)&lt;/FONT&gt;&lt;/TD&gt;
+            &lt;TD BGCOLOR=&quot;white&quot;&gt;PSOC™ Control boards&lt;BR/&gt;&lt;FONT POINT-SIZE=&quot;10&quot;&gt;Coming soon&lt;/FONT&gt;&lt;/TD&gt;
+          &lt;/TR&gt;
+          &lt;TR&gt;
+            &lt;TD COLSPAN=&quot;2&quot; BGCOLOR=&quot;#0A8276&quot; HREF=&quot;https://github.com/zephyrproject-rtos/zephyr&quot; TARGET=&quot;_top&quot;&gt;&lt;FONT COLOR=&quot;white&quot;&gt;&lt;B&gt;Zephyr RTOS&lt;/B&gt;&lt;BR/&gt;&lt;FONT POINT-SIZE=&quot;10&quot;&gt;kernel &amp;#183; drivers &amp;#183; devicetree &amp;#183; build system&lt;/FONT&gt;&lt;/FONT&gt;&lt;/TD&gt;
+            &lt;TD ROWSPAN=&quot;2&quot; BGCOLOR=&quot;#F2F2F2&quot; VALIGN=&quot;MIDDLE&quot;&gt;Dependencies&lt;/TD&gt;
+          &lt;/TR&gt;
+          &lt;TR&gt;
+            &lt;TD BGCOLOR=&quot;#F2F2F2&quot; HREF=&quot;https://github.com/zephyrproject-rtos/zephyr/tree/main/boards/infineon&quot; TARGET=&quot;_top&quot;&gt;PSOC™ Edge boards&lt;BR/&gt;&lt;FONT POINT-SIZE=&quot;10&quot;&gt;Board support&lt;/FONT&gt;&lt;/TD&gt;
+            &lt;TD BGCOLOR=&quot;#F2F2F2&quot; HREF=&quot;https://github.com/zephyrproject-rtos/zephyr/tree/main/boards/infineon&quot; TARGET=&quot;_top&quot;&gt;PSOC™ Control boards&lt;BR/&gt;&lt;FONT POINT-SIZE=&quot;10&quot;&gt;Board support&lt;/FONT&gt;&lt;/TD&gt;
+          &lt;/TR&gt;
+        &lt;/TABLE&gt;
+    &gt;];
+}</p></object></div>
+<p>Unlike native Arduino cores (e.g. for AVR or SAMD boards), where the Arduino
+APIs talk almost directly to the microcontroller, this core runs on top of
+Zephyr RTOS. Zephyr provides the kernel, drivers, devicetree-based build
+system, and board support; the Arduino Core for Zephyr exposes those
+capabilities through familiar Arduino APIs.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">CONTENT</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation-instructions.html">Installation Instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation-instructions.html#integration-in-arduino-ide">Integration in Arduino IDE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation-instructions.html#installation-in-arduino-cli">Installation in Arduino CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hw-platforms.html">Supported Boards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hw-platforms.html#kit-pse84-ai">KIT-PSE84-AI</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>Please find the license file for this core <a class="reference external" href="https://github.com/Infineon/ArduinoCore-zephyr/blob/main/LICENSE">here</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation-instructions.html" class="btn btn-neutral float-right" title="Installation Instructions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026 Infineon Technologies AG.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

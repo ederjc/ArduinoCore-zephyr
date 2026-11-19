@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Page not found</title>
+  <style>
+    body { font-family: "Source Sans 3", Arial, sans-serif; color: #1D1D1D;
+           max-width: 40em; margin: 4em auto; padding: 0 1em; }
+    h1 { color: #0A8276; font-weight: 600; }
+    a { color: #0A8276; }
+  </style>
+</head>
+<body>
+  <h1>Page not found</h1>
+  <p>The page you requested does not exist in this version of the
+     documentation. It may have been moved, or the version may no longer
+     be published.</p>
+  <ul id="links"></ul>
+  <script>
+    // GitHub Pages serves this page for any missing path, so locate the site
+    // root by probing for the versions manifest along the requested path.
+    (function () {
+      var parts = window.location.pathname.split("/").filter(Boolean);
+      var list = document.getElementById("links");
+      function add(href, text) {
+        var item = document.createElement("li");
+        var link = document.createElement("a");
+        link.href = href;
+        link.textContent = text;
+        item.appendChild(link);
+        list.appendChild(item);
+      }
+      function probe(depth) {
+        if (depth > parts.length) {
+          add("/", "Go to the home page");
+          return;
+        }
+        var root = "/" + parts.slice(0, depth).join("/") + (depth ? "/" : "");
+        fetch(root + "versions.json").then(function (response) {
+          if (!response.ok) { throw new Error(); }
+          return response.json();
+        }).then(function (manifest) {
+          var folder = parts[depth];
+          var aliases = manifest.aliases || {};
+          var slug = aliases[folder] || folder;
+          var version = (manifest.versions || []).filter(function (v) {
+            return v.slug === slug;
+          })[0];
+          if (version) {
+            add(root + folder + "/", "Go to the start page of version " + version.name);
+          }
+          add(root, "Go to the documentation home page");
+        }).catch(function () { probe(depth + 1); });
+      }
+      probe(0);
+    })();
+  </script>
+</body>
+</html>

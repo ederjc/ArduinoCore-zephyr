@@ -1,0 +1,13 @@
+{
+  "aliases": {},
+  "default_branch": "ifx-main",
+  "versions": [
+    {
+      "commit": "d3163cca7d32d18a810690a072b40da21f89ab5a",
+      "name": "docs/github-pages-hosting",
+      "slug": "docs-github-pages-hosting",
+      "type": "branch",
+      "updated": "2026-11-19T08:11:53+00:00"
+    }
+  ]
+}
